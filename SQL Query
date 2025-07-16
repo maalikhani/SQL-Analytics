@@ -1,0 +1,56 @@
+ Task List
+1. Customer Analysis
+
+• Find the top 5 customers by total purchase amount.
+
+select top 5
+       c.customername,
+       sum (p.price * od.quantity) as total_purchase
+       from ((customers c
+       left join orders o on o.customerid = c.customerid)
+       left join orderdetails od on o.orderid = od.orderid)
+       left join products p on p.productid = od.productid
+       group by   c.customername
+       order by 2 desc
+
+
+• Identify customers who haven’t made any orders.
+
+select 
+       c.customername,
+       c.customerid
+       from customers c
+       left join orders o on o.customerid = c.customerid
+       where o.orderid is null
+        
+
+
+• Write a view called customer_order_summary with customer name, total order 
+count, and total amount spent.
+
+create view customer_order_summary as
+select 
+      c.customername,
+      count(od.quantity) as total_order_count,
+      sum(od.quantity * p.price) as total_amount_spent
+from customers c
+left join orders o on c.customerid = o.customerid
+left join orderdetails od on od.orderid = o.orderid
+left join products p on p.productid = od.productid
+group by c.customername
+order by total_amount_spent
+
+
+2.Sales Analysis
+
+• List the top 3 products with the highest total sales value.
+
+select 
+      top 3
+      p.productname,
+      sum(p.price * od.quantity) as total_sales_value
+      from products p
+      left join orderdetails od on od.productid = p.productid
+group by p.productname
+order by 2 desc
+
